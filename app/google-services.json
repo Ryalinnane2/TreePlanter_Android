@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "501145953934",
+    "firebase_url": "https://treeplanter-3ea01.firebaseio.com",
+    "project_id": "treeplanter-3ea01",
+    "storage_bucket": "treeplanter-3ea01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501145953934:android:42919809fb35decbfccbdf",
+        "android_client_info": {
+          "package_name": "com.example.treeplanter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501145953934-amrnb64053qjm1ef3psnmu14rj0uu8qj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.treeplanter",
+            "certificate_hash": "ffb747d0c0bf104a2281a38549766051ffa101fe"
+          }
+        },
+        {
+          "client_id": "501145953934-ln0qpr14n60nev979rg597evupvio7bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzOOuK2yvRfMDebKiQQqSDaq7-ynJwpBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501145953934-ln0qpr14n60nev979rg597evupvio7bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
