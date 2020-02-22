@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
        currentUser = mAuth.getCurrentUser();
        if (currentUser != null){
            // display google maps page
-           logIn();
+           //logIn();
        }
     }
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            logIn();
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                               //      Toast.LENGTH_SHORT).show();
                             // **** if account does not exist create account***
                             createAccount();
+
 
                         }
 
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private void logIn() {
         //intent to change to maps
         Intent intent = new Intent(this,MapsActivity.class);
+        this.startActivity(intent);
 
     }
 
@@ -91,10 +93,8 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "Account Created!");
                             // add to database
-                            myRef.child("users").child(task.getResult().getUser().getUid()).child("email").setValue(email.toString());
-
+                            myRef.child("users").child(task.getResult().getUser().getUid()).child("email").setValue(email.getText().toString());
                             logIn();
-
 
                         } else {
                             // If sign in fails, display a message to the user.

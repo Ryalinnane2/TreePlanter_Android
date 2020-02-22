@@ -30,6 +30,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -43,7 +44,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (item.getItemId()== R.id.logout){
             mAuth.signOut();
             finish();
-            Intent intent = new Intent(this,MapsActivity.class);
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+
+        } else if (item.getItemId()== R.id.purchase){
+            Intent intent = new Intent(this,PurchaseActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
