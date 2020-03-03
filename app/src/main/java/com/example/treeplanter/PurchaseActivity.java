@@ -11,7 +11,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -54,16 +57,17 @@ public class PurchaseActivity extends AppCompatActivity {
 
         //create a hashmap of data from this purchase
         HashMap<String,String> purchaseInfo = new HashMap<>();
+        //add users selected data to hashmap
         purchaseInfo.put("Tree Name",name);
         purchaseInfo.put("Tree Location",location);
         purchaseInfo.put("Tree Type",type);
 
-        // add hashmap to firebase database
-        myRef.child("users").child("Purchases").push().setValue(purchaseInfo);
-
-        Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
-
-
+        //Get the logged in user
+        FirebaseUser currentUser = mAuth.getInstance().getCurrentUser();
+        // add purchase hashmap under users UUID in database
+        myRef.child("users").child(currentUser.getUid()).child("Purchases").push().setValue(purchaseInfo);
+        //pop up message
+        Toast.makeText(this, "Purchase complete!", Toast.LENGTH_SHORT).show();
 
     }
 
