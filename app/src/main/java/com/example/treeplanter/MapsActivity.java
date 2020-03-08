@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -32,6 +34,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLng masseyWoods = new LatLng(53.2539026, -6.3232363);
     private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
     private static final LatLng BRISBANE = new LatLng(-27.47093, 153.0235);
+    private String treeLocation;
+    private Button plantHere_btn;
 
 
     private Marker mMassey;
@@ -48,6 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mAuth = FirebaseAuth.getInstance();
+
     }
 
     @Override
@@ -160,11 +165,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /** Called when the user clicks a marker. */
     @Override
     public boolean onMarkerClick(final Marker marker) {
-
+        //When marker is clicked set button to be visible
+        plantHere_btn = findViewById(R.id.plantHere_btn);
+        plantHere_btn.setVisibility(View.VISIBLE);
         // Retrieve the data from the marker.
-        String treeLocation = (String) marker.getTitle();
-        Toast.makeText(this, treeLocation, Toast.LENGTH_SHORT).show();
-        // Show button to take user to next page
+        treeLocation = (String) marker.getTitle();
+        // Display message with location user has picked
+        Toast.makeText(this, "Location selected: " + treeLocation, Toast.LENGTH_SHORT).show();
 
         // Check if a click count was set, then display the click count.
         /*
@@ -182,6 +189,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // for the default behavior to occur (which is for the camera to move such that the
         // marker is centered and for the marker's info window to open, if it has one).
         return false;
+    }
+
+    // Plant here button which takes users to purchase page
+    public void toPurchase(View view) {
+        Intent intent = new Intent(MapsActivity.this,PurchaseActivity.class);
+        intent.putExtra("treeLocation", treeLocation);
+        this.startActivity(intent);
     }
 
 }

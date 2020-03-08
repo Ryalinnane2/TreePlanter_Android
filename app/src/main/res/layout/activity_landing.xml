@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/forest"
+    tools:context=".LandingActivity">
+
+    <Button
+        android:id="@+id/location_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="96dp"
+        android:onClick="location_btn"
+        android:text="Choose Location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        android:outlineAmbientShadowColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:background="@drawable/border"
+        android:textColor="#FFFFFF"/>
+
+    <Spinner
+        android:id="@+id/treeType_Spinner"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="150dp"
+        android:backgroundTint="#FFFFFF"
+        android:hint="Tree Type"
+        android:textSize="24sp"
+        android:entries="@array/Spinner_Items"
+
+        app:layout_constraintBottom_toTopOf="@+id/location_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/spinner_TV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/spinner_TV"
+        android:layout_width="wrap_content"
+        android:layout_height="24sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginBottom="150dp"
+        android:text="Select Tree Type: "
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/location_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.505" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

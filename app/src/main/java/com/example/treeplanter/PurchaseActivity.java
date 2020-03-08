@@ -4,10 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,12 +32,17 @@ import java.util.Set;
 
 public class PurchaseActivity extends AppCompatActivity {
 
+
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
-    private EditText treeName;
-    private EditText treeLocation;
-    private EditText treeType;
+    private EditText treeName_TV;
+    private TextView treeLocation_TV;
+    private TextView treeType_TV;
+    private String treeType;
+    private String treeLocation;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,26 +52,30 @@ public class PurchaseActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
+        treeType_TV = findViewById(R.id.treeType_TV);
+        treeName_TV = findViewById(R.id.treeName_TV);
+        treeLocation_TV = findViewById(R.id.treeLocation_TV);
+        treeName_TV.setInputType(InputType.TYPE_CLASS_TEXT);
+        treeType = LandingActivity.getTreeType();
 
-       treeName = findViewById(R.id.treeName_TV);
-       treeLocation = findViewById(R.id.treeLocation_TV);
-       treeType = findViewById(R.id.treeType_TV);
-       treeName.setInputType(InputType.TYPE_CLASS_TEXT);
-       treeLocation.setInputType(InputType.TYPE_CLASS_TEXT);
-       treeType.setInputType(InputType.TYPE_CLASS_TEXT);
+        // Get the location of tree selected from MapsActivity
+        Intent i = getIntent();
+        treeLocation = i.getStringExtra("treeLocation");
+        //treeType = i.getStringExtra("treeType");
+        treeLocation_TV.setText("Tree location: " + treeLocation);
+        treeType_TV.setText("Tree Type: " + treeType);
+
     }
 
     public void purchaseButton(View view) {
-        String name = treeName.getText().toString();
-        String location = treeLocation.getText().toString();
-        String type = treeType.getText().toString();
+        String name = treeName_TV.getText().toString();
 
         //create a hashmap of data from this purchase
-        HashMap<String,String> purchaseInfo = new HashMap<>();
+        HashMap<String, String> purchaseInfo = new HashMap<>();
         //add users selected data to hashmap
-        purchaseInfo.put("Tree Name",name);
-        purchaseInfo.put("Tree Location",location);
-        purchaseInfo.put("Tree Type",type);
+        purchaseInfo.put("Tree Name", name);
+        purchaseInfo.put("Tree Location", treeLocation);
+        purchaseInfo.put("Tree Type", treeType);
 
         //Get the logged in user
         FirebaseUser currentUser = mAuth.getInstance().getCurrentUser();
@@ -72,3 +87,5 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
 }
+
+

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TreePlanter</string>
     <string name="title_activity_maps">Map</string>
+    <string-array name="Spinner_Items">
+        <item>Birch</item>
+        <item>Oak</item>
+        <item>Willow</item>
+    </string-array>
 </resources>

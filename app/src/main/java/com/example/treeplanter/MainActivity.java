@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void logIn() {
         //intent to change to maps
-        Intent intent = new Intent(this,MapsActivity.class);
+        Intent intent = new Intent(this,LandingActivity.class);
         this.startActivity(intent);
 
     }
