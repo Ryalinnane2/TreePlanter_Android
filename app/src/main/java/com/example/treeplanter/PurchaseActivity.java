@@ -82,7 +82,7 @@ public class PurchaseActivity extends AppCompatActivity {
         // add purchase hashmap under users UUID in database
         myRef.child("users").child(currentUser.getUid()).child("Purchases").push().setValue(purchaseInfo);
         //pop up message
-        Intent intent = new Intent(PurchaseActivity.this,GooglePayActivity.class);
+        Intent intent = new Intent(PurchaseActivity.this,CheckoutActivityJava.class);
         this.startActivity(intent);
 
     }
