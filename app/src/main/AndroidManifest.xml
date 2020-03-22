@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GooglePayActivity"></activity>
+        <activity android:name=".activity_payment_confirmation"></activity>
+        <activity android:name=".GooglePayActivity" />
         <activity android:name=".LandingActivity" />
         <activity android:name=".PurchaseActivity" />
         <activity android:name=".CheckoutActivityJava" />
