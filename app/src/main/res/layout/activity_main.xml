@@ -65,7 +65,7 @@
 
         android:linksClickable="true"
         android:onClick="resetPW_btn"
-        android:textColor="#3F51B5"
+        android:textColor="#0000EE"
         android:text="Forgot password"
         android:textAlignment="center"
         android:textColorLink="#03A9F4"

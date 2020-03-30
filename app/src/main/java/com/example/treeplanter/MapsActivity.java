@@ -39,8 +39,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private Marker mMassey;
-    private Marker mSydney;
-    private Marker mBrisbane;
+    private Marker mTicnock;
+    private Marker mPhoenix;
 
 
     @Override
@@ -90,6 +90,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mMap != null)   {
             //Massey Woods Marker
             LatLng masseyWoods = new LatLng(53.2539026, -6.3232363);
+            LatLng tickNock = new LatLng(53.2556435,-6.2532698);
+            LatLng phoenix = new LatLng(53.3558823,-6.332002);
             mMap.addMarker(new MarkerOptions()
                     .position(masseyWoods)
                     .title("Massey Woods"));
@@ -99,15 +101,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title("Perth"));
             mMassey.setTag(0);
 
-            mSydney = mMap.addMarker(new MarkerOptions()
-                    .position(SYDNEY)
-                    .title("Sydney"));
-            mSydney.setTag(0);
+            mTicnock = mMap.addMarker(new MarkerOptions()
+                    .position(tickNock)
+                    .title("Ticknock Forest"));
+            mTicnock.setTag(0);
 
-            mBrisbane = mMap.addMarker(new MarkerOptions()
-                    .position(BRISBANE)
-                    .title("Brisbane"));
-            mBrisbane.setTag(0);
+            mPhoenix = mMap.addMarker(new MarkerOptions()
+                    .position(phoenix)
+                    .title("Phoenix Park"));
+            mPhoenix.setTag(0);
 
             // Set a listener for marker click.
             mMap.setOnMarkerClickListener(this);
@@ -173,21 +175,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Display message with location user has picked
         Toast.makeText(this, "Location selected: " + treeLocation, Toast.LENGTH_SHORT).show();
 
-        // Check if a click count was set, then display the click count.
-        /*
-        if (clickCount != null) {
-            clickCount = clickCount + 1;
-            marker.setTag(clickCount);
-            Toast.makeText(this,
-                    marker.getTitle() +
-                            " has been clicked " + clickCount + " times.",
-                    Toast.LENGTH_SHORT).show();
-        }
-         */
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur (which is for the camera to move such that the
-        // marker is centered and for the marker's info window to open, if it has one).
         return false;
     }
 

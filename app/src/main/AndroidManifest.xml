@@ -16,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity_payment_confirmation"></activity>
-        <activity android:name=".GooglePayActivity" />
         <activity android:name=".LandingActivity" />
         <activity android:name=".PurchaseActivity" />
         <activity android:name=".CheckoutActivityJava" />

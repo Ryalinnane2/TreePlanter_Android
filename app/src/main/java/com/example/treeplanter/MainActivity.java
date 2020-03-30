@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText email;
     private EditText password;
+    private TextView pwTV;
     private FirebaseUser currentUser;
     private boolean isEmailVerified;
     // 1 = email sent, 0 = email not yet sent
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         
        email = findViewById(R.id.emailEditText);
        password = findViewById(R.id.pwEditText);
+       pwTV = findViewById(R.id.reset_pwTV);
+       pwTV.setTextColor(Color.parseColor("#0000EE"));
 
        currentUser = mAuth.getCurrentUser();
 
@@ -211,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(MainActivity.this, "An email link has been sent to your email address", Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "Email sent.");
+
+                                pwTV.setTextColor(Color.parseColor("#551A8B"));
                             }
                         }
                     });
