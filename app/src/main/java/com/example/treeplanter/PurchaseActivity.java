@@ -3,12 +3,18 @@ package com.example.treeplanter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -32,7 +38,6 @@ import java.util.Set;
 
 public class PurchaseActivity extends AppCompatActivity {
 
-
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
@@ -41,13 +46,24 @@ public class PurchaseActivity extends AppCompatActivity {
     private TextView treeType_TV;
     private String treeType;
     private String treeLocation;
-
-
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //change colour of status bar
+        Window window = this.getWindow();
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // change the color
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.stautsBar));
+
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -64,29 +80,36 @@ public class PurchaseActivity extends AppCompatActivity {
         //treeType = i.getStringExtra("treeType");
         treeLocation_TV.setText("Tree location: " + treeLocation);
         treeType_TV.setText("Tree Type: " + treeType);
-
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.treemenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()== R.id.logout){
+            mAuth.signOut();
+            finish();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    // sign out if back button pressed
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
     public void purchaseButton(View view) {
-        String name = treeName_TV.getText().toString();
-
-        //create a hashmap of data from this purchase
-        HashMap<String, String> purchaseInfo = new HashMap<>();
-        //add users selected data to hashmap
-        purchaseInfo.put("Tree Name", name);
-        purchaseInfo.put("Tree Location", treeLocation);
-        purchaseInfo.put("Tree Type", treeType);
-
-        //Get the logged in user
-        FirebaseUser currentUser = mAuth.getInstance().getCurrentUser();
-        // add purchase hashmap under users UUID in database
-        myRef.child("users").child(currentUser.getUid()).child("Purchases").push().setValue(purchaseInfo);
-        //pop up message
+        name = treeName_TV.getText().toString();
+        //Send info to checkout activity, where it will be added to firebase
         Intent intent = new Intent(PurchaseActivity.this,CheckoutActivityJava.class);
+        intent.putExtra("treeLocation", treeLocation);
+        intent.putExtra("treeName", name);
+        intent.putExtra("treeType", treeType);
         this.startActivity(intent);
-
     }
-
 }
 
 

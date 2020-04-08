@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -31,22 +33,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int LOCATION_REQUEST_CODE = 101;
     private GoogleMap mMap;
     private FirebaseAuth mAuth;
-    private static final LatLng masseyWoods = new LatLng(53.2539026, -6.3232363);
-    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
-    private static final LatLng BRISBANE = new LatLng(-27.47093, 153.0235);
     private String treeLocation;
     private Button plantHere_btn;
-
-
     private Marker mMassey;
     private Marker mTicnock;
     private Marker mPhoenix;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        //change colour of status bar
+        Window window = this.getWindow();
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // change the color
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.stautsBar));
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -68,21 +72,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             finish();
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
-
-        } else if (item.getItemId()== R.id.purchase){
-            Intent intent = new Intent(this,PurchaseActivity.class);
-            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
-    // sign out if back button pressed
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        mAuth.signOut();
     }
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -161,9 +158,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         }
-
     }
-
     /** Called when the user clicks a marker. */
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -177,12 +172,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return false;
     }
-
     // Plant here button which takes users to purchase page
     public void toPurchase(View view) {
         Intent intent = new Intent(MapsActivity.this,PurchaseActivity.class);
         intent.putExtra("treeLocation", treeLocation);
         this.startActivity(intent);
     }
-
 }

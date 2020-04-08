@@ -2,6 +2,8 @@ package com.example.treeplanter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,11 +11,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -31,6 +36,19 @@ public class LandingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        //setActionBar(toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //change colour of status bar
+        Window window = this.getWindow();
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // change the color
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.stautsBar));
+
         mAuth = FirebaseAuth.getInstance();
 
         dropdown = findViewById(R.id.treeType_Spinner);
@@ -63,16 +81,10 @@ public class LandingActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.treemenu, menu);
         return super.onCreateOptionsMenu(menu);
-
-
     }
 
     @Override
@@ -81,10 +93,6 @@ public class LandingActivity extends AppCompatActivity {
             mAuth.signOut();
             finish();
             Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-
-        } else if (item.getItemId()== R.id.purchase){
-            Intent intent = new Intent(this,PurchaseActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -12,6 +13,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -43,26 +46,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Initialize Firebase Auth
+
+        //Hide the status bar
+        //Reference: https://developer.android.com/training/system-ui/status
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        // Initialise Firebase Auth & set Database Reference
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
-        
+
+        //Assign Views to variables
        email = findViewById(R.id.emailEditText);
        password = findViewById(R.id.pwEditText);
        pwTV = findViewById(R.id.reset_pwTV);
+       //Change colour of Reset Password link to Blue
        pwTV.setTextColor(Color.parseColor("#0000EE"));
-
-       currentUser = mAuth.getCurrentUser();
-
-
-
-       if (currentUser != null){
-           // display google maps page
-           //logIn();
-       }
-
-
     }
 
     public void loginButton(View view) {
@@ -74,17 +76,14 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // User has successfully signed in
                                 Log.d(TAG, "signInWithEmail:success");
+                                //checkIfEmailVerified();
                                 // procceed to the next page
                                 logIn();
 
                             } else {
-
-                                checkIfEmailVerified();
-
-
+                                createAccount();
                             }
                         }
-
                     });
         }else{
             Toast.makeText(this, "Invalid email entered", Toast.LENGTH_LONG).show();
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void logIn() {
         //intent to change to maps
+
         Intent intent = new Intent(this,LandingActivity.class);
         this.startActivity(intent);
     }
@@ -103,24 +103,20 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success
-                            // add to database
-                            myRef.child("users").child(task.getResult().getUser().getUid()).child("email").setValue(email.getText().toString());
-                        Toast.makeText(MainActivity.this, "A verification link has been sent to this email address, this must be clicked before you can log in!", Toast.LENGTH_LONG).show();
-                        // check if email is verified
-                        verificationEmail();
-
-
+                            // user is logged in
+                            // set current user
+                            currentUser = mAuth.getCurrentUser();
+                            //set up database for this user
+                            myRef.child("users").child(task.getResult().getUser().getUid()).child("email")
+                                    .setValue(email.getText().toString());
+                            // check if email is verified
+                            checkIfEmailVerified();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "An error occured: ", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-
-
                         }
-
-
                     }
                 });
     }
@@ -136,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             // if email is sent
                             if (task.isSuccessful()) {
+                                Toast.makeText(MainActivity.this, "A verification link has been sent to this email address, this must be clicked before you can log in!", Toast.LENGTH_LONG).show();
                                 //set variable to true to track email being sent
                                 emailSent = 1;
                                 //logout the user and finish this activity
@@ -189,10 +186,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //https://stackoverflow.com/questions/40404567/how-to-send-verification-email-with-firebase
-    private void  checkIfEmailVerified()
-    {
-
-        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private void  checkIfEmailVerified(){
         if (currentUser != null && currentUser.isEmailVerified())
         {
             // user has been verified, login
@@ -200,9 +194,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            // If account, create one.
-            createAccount();
-
+            // send verification email
+            verificationEmail();
         }
     }
 

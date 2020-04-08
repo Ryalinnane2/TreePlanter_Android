@@ -7,21 +7,25 @@
     android:background="@drawable/forest"
     tools:context=".LandingActivity">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <Button
         android:id="@+id/location_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/border"
         android:onClick="location_btn"
+        android:outlineAmbientShadowColor="#FFFFFF"
         android:text="Choose Location"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        android:outlineAmbientShadowColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        android:background="@drawable/border"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
         android:id="@+id/treeType_Spinner"
@@ -30,11 +34,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="502dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="50dp"
         android:backgroundTint="#FFFFFF"
+        android:entries="@array/Spinner_Items"
         android:hint="Tree Type"
         android:textSize="24sp"
-        android:entries="@array/Spinner_Items"
 
         app:layout_constraintBottom_toTopOf="@+id/location_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,13 +51,29 @@
         android:layout_height="24sp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="502dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="50dp"
         android:text="Select Tree Type: "
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/location_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.505" />
+        app:layout_constraintVertical_bias="0.505"/>
+
+    <TextView
+        android:id="@+id/landing_TV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="150dp"
+        android:text="Plant trees in your area!"
+        android:textColor="#ffffff"
+
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,10 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".PurchaseActivity">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <Button
         android:id="@+id/purchase_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:backgroundTint="@color/stautsBar"
+        android:outlineAmbientShadowColor="#FFFFFF"
+        android:textColor="#020202"
+        android:textColorHint="#FFFFFF"
         android:layout_marginStart="159dp"
         android:layout_marginEnd="164dp"
         android:layout_marginBottom="100dp"
@@ -25,15 +34,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="110dp"
         android:hint="Tree Name"
-        android:textSize="20dp"
+        android:inputType="text"
         android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toTopOf="@+id/gift_switch"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:inputType="text"/>
+        app:layout_constraintBottom_toTopOf="@+id/purchase_btn"
+        tools:layout_editor_absoluteY="427dp" />
 
     <TextView
 
@@ -43,9 +52,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
-        android:textSize="20dp"
         android:text=""
         android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/treeName_TV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -58,24 +67,30 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
-        android:textSize="20dp"
         android:text=""
         android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/treeType_TV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/purchaseTV"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <Switch
-        android:id="@+id/gift_switch"
+    <TextView
+        android:id="@+id/purchaseTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="16dp"
+        android:textStyle="bold"
+        android:text="Your Purchase Information"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="50dp"
-        android:text="Buy as a gift        "
-        android:textColorHighlight="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@id/purchase_btn"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
