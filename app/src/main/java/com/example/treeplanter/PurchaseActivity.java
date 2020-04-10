@@ -47,6 +47,11 @@ public class PurchaseActivity extends AppCompatActivity {
     private String treeType;
     private String treeLocation;
     private String name;
+    private Cart cart;
+    private static int countB = 0;
+    private int countO = 0;
+    private int countW = 0;
+    private static HashMap<String, String> purchaseInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,7 @@ public class PurchaseActivity extends AppCompatActivity {
         //treeType = i.getStringExtra("treeType");
         treeLocation_TV.setText("Tree location: " + treeLocation);
         treeType_TV.setText("Tree Type: " + treeType);
+        cart = new Cart(treeLocation, treeType);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,14 +107,59 @@ public class PurchaseActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
     public void purchaseButton(View view) {
-        name = treeName_TV.getText().toString();
-        //Send info to checkout activity, where it will be added to firebase
-        Intent intent = new Intent(PurchaseActivity.this,CheckoutActivityJava.class);
+        if (!cart.getPurchaseInfo().isEmpty()) {
+            countB = cart.getCountB();
+            countO = cart.getCountO();
+            countW = cart.getCountW();
+            purchaseInfo = new HashMap<>(cart.getPurchaseInfo());
+            //Send info to checkout activity, where it will be added to firebase
+            Intent intent = new Intent(PurchaseActivity.this, CheckoutActivityJava.class);
+            //send cart object
+            intent.putExtra("countB",String.valueOf(countB));
+            intent.putExtra("countB",String.valueOf(countO));
+            intent.putExtra("countB",String.valueOf(countW));
+            intent.putExtra("map",purchaseInfo);
+        /*
         intent.putExtra("treeLocation", treeLocation);
         intent.putExtra("treeName", name);
         intent.putExtra("treeType", treeType);
-        this.startActivity(intent);
+        */
+            this.startActivity(intent);
+
+            Cart.setCountB(countB);
+            Cart.setCountO(countO);
+            Cart.setCountW(countW);
+        }else{
+            Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void addMore_btn(View view){
+
+        if (cart.getPurchaseInfo() != null) {
+            Intent intent = new Intent(PurchaseActivity.this, LandingActivity.class);
+            this.startActivity(intent);
+        }else{
+            Toast.makeText(this, "Cart is empty, please add to Cart before continuing", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void addToCart(View view){
+        name = treeName_TV.getText().toString();
+        if (name != null) {
+
+            Cart.setName(name);
+            Cart.addToMap(treeType);
+
+            //Toast.makeText(this, Integer.toString(cart.getCountB()), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, Cart.getPurchaseInfo().toString(), Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 

@@ -9,6 +9,23 @@
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
+    <Button
+        android:id="@+id/addToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:backgroundTint="@color/stautsBar"
+        android:outlineAmbientShadowColor="#FFFFFF"
+        android:textColor="#020202"
+        android:textColorHint="#FFFFFF"
+        android:layout_marginStart="159dp"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="160dp"
+        android:onClick="addToCart"
+        android:text="Add to Cart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/purchase_btn"
@@ -22,11 +39,29 @@
         android:layout_marginStart="159dp"
         android:layout_marginEnd="164dp"
         android:layout_marginBottom="100dp"
-        android:onClick="purchaseButton"
-        android:text="Purchase"
+        android:onClick="addMore_btn"
+        android:text="Buy another"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+    <Button
+        android:id="@+id/addMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:backgroundTint="@color/stautsBar"
+        android:outlineAmbientShadowColor="#FFFFFF"
+        android:textColor="#020202"
+        android:textColorHint="#FFFFFF"
+        android:layout_marginStart="159dp"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="40dp"
+        android:onClick="purchaseButton"
+        android:text="Buy Now"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <EditText
         android:id="@+id/treeName_TV"
