@@ -52,6 +52,8 @@ public class PurchaseActivity extends AppCompatActivity {
     private int countO = 0;
     private int countW = 0;
     private static HashMap<String, String> purchaseInfo;
+    private ArrayList<String> arrayList = new ArrayList<>();
+    private int price = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class PurchaseActivity extends AppCompatActivity {
         // change the color
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.stautsBar));
 
+
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -85,7 +88,7 @@ public class PurchaseActivity extends AppCompatActivity {
         //treeType = i.getStringExtra("treeType");
         treeLocation_TV.setText("Tree location: " + treeLocation);
         treeType_TV.setText("Tree Type: " + treeType);
-        cart = new Cart(treeLocation, treeType);
+        //cart = new Cart(treeLocation, treeType);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,18 +112,19 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
     public void purchaseButton(View view) {
-        if (!cart.getPurchaseInfo().isEmpty()) {
+        if (!Cart.getPurchaseInfo().isEmpty()) {
             countB = cart.getCountB();
             countO = cart.getCountO();
             countW = cart.getCountW();
-            purchaseInfo = new HashMap<>(cart.getPurchaseInfo());
+          //  purchaseInfo = new HashMap<>(cart.getPurchaseInfo());
             //Send info to checkout activity, where it will be added to firebase
             Intent intent = new Intent(PurchaseActivity.this, CheckoutActivityJava.class);
             //send cart object
-            intent.putExtra("countB",String.valueOf(countB));
-            intent.putExtra("countB",String.valueOf(countO));
-            intent.putExtra("countB",String.valueOf(countW));
-            intent.putExtra("map",purchaseInfo);
+            //intent.putExtra("countB",String.valueOf(countB));
+            //intent.putExtra("countB",String.valueOf(countO));
+            //intent.putExtra("countB",String.valueOf(countW));
+            //intent.putExtra("map",purchaseInfo);
+            intent.putExtra("arrayList",arrayList);
         /*
         intent.putExtra("treeLocation", treeLocation);
         intent.putExtra("treeName", name);
@@ -138,7 +142,7 @@ public class PurchaseActivity extends AppCompatActivity {
 
     public void addMore_btn(View view){
 
-        if (cart.getPurchaseInfo() != null) {
+        if (Cart.getPurchaseInfo() != null) {
             Intent intent = new Intent(PurchaseActivity.this, LandingActivity.class);
             this.startActivity(intent);
         }else{
@@ -150,15 +154,30 @@ public class PurchaseActivity extends AppCompatActivity {
     public void addToCart(View view){
         name = treeName_TV.getText().toString();
         if (name != null) {
-
+            Cart.setType(treeType);
             Cart.setName(name);
+            Cart.setLocation(treeLocation);
             Cart.addToMap(treeType);
+            setPrice(treeType);
+            String purchaseInfo = ("Tree Name: "+ name +'\n' + "Tree Location: "+ treeLocation + '\n' + "Tree Type: " + treeType + '\n' + "Price: " + price);
+            Cart.setPurchaseInfo(purchaseInfo);
 
             //Toast.makeText(this, Integer.toString(cart.getCountB()), Toast.LENGTH_SHORT).show();
             //Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, Cart.getPurchaseInfo().toString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, Cart.getPurchaseInfo().toString(), Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void setPrice(String s){
+        if (s.equals("Birch")){
+            this.price = 1;
+        }else if(s.equals("Willow")){
+            this.price = 2;
+        }else if (s.equals("Oak")){
+            this.price = 3;
+        }else{
+            this.price = 0;
         }
     }
 }
