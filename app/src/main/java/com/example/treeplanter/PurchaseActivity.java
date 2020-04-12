@@ -163,7 +163,7 @@ public class PurchaseActivity extends AppCompatActivity {
             Cart.setPurchaseInfo(purchaseInfo);
 
             //Toast.makeText(this, Integer.toString(cart.getCountB()), Toast.LENGTH_SHORT).show();
-            //Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
             //Toast.makeText(this, Cart.getPurchaseInfo().toString(), Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
