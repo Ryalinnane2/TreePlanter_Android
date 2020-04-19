@@ -6,7 +6,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,20 +15,18 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LandingActivity extends AppCompatActivity {
+    /*
+    References: https://developer.android.com/docs
+     */
 
     private FirebaseAuth mAuth;
     public static String treeType;
     private Spinner dropdown;
-    //private String mapTreeLocation;
-    //create a list of items for the spinner.
-    //private String[] items = new String[]{"Birch", "Oak", "Willow"};
 
 
     @Override
@@ -81,22 +78,6 @@ public class LandingActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.treemenu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()== R.id.logout){
-            mAuth.signOut();
-            finish();
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
     // sign out if back button pressed
     @Override
     public void onBackPressed() {
@@ -105,7 +86,7 @@ public class LandingActivity extends AppCompatActivity {
     }
 
     public void location_btn(View view) {
-        //Change to Maps page and send the selected tree type data
+        //Change to Maps page
         Intent intent = new Intent(this,MapsActivity.class);
         this.startActivity(intent);
     }

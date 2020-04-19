@@ -1,6 +1,6 @@
 package com.example.treeplanter;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -30,54 +29,32 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
-import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 import com.stripe.android.ApiResultCallback;
-import com.stripe.android.GooglePayConfig;
 import com.stripe.android.PaymentConfiguration;
 import com.stripe.android.PaymentIntentResult;
-import com.stripe.android.PaymentSessionConfig;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmPaymentIntentParams;
 import com.stripe.android.model.PaymentIntent;
-import com.stripe.android.model.PaymentMethod;
 import com.stripe.android.model.PaymentMethodCreateParams;
 import com.stripe.android.view.CardInputWidget;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -86,14 +63,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import java.util.Map.Entry;
+
+import java.util.Set;
 import java.util.TreeMap;
 
 public class CheckoutActivityJava extends AppCompatActivity {
     /**
-     * This example collects card payments, implementing the guide here: https://stripe.com/docs/payments/accept-a-payment#android
-     * <p>
-     * To run this app, follow the steps here: https://github.com/stripe-samples/accept-a-card-payment#how-to-run-locally
+     * Reference to Stripe guide followed:  https://stripe.com/docs/payments/accept-a-payment#android
+     * Note: Stripe server.js must be run locally on the desktop.
+     *  - open command terminal, change directory to where the stripe.js is stored.
+     *  - enter the command: 'npm start' to run the server.
+     *
+     * Else the following step can be followed here: https://github.com/stripe-samples/accept-a-card-payment#how-to-run-locally.
      */
     // 10.0.2.2 is the Android emulator's alias to localhost
     private static final String BACKEND_URL = "http://10.0.2.2:4242/";
@@ -104,24 +85,15 @@ public class CheckoutActivityJava extends AppCompatActivity {
     private static FirebaseDatabase database;
     private static DatabaseReference myRef;
     private static FirebaseAuth mAuth;
-    private boolean paymentResultSuccess;
     private static Context mContext;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private int imageID;
-    private long itemPrice;
-    private ItemInfo mTreeItem;
     private String userEmail;
     private static FirebaseUser currentUser;
-    private static String treeLocation;
-    private static String treeName;
-    private static String treeType;
-    private static HashMap<String, String> purchaseInfo;
     private String json;
     private ArrayList<String> arrayList;
+    private TreeMap<String, String> sortedMap;
+    private TextView price_TV;
 
-    //private static Cart cart = new Cart();
+    //counter for types of trees purchased
     private int countB = 0;
     private int countO = 0;
     private int countW = 0;
@@ -147,7 +119,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
         //get Hashmap to add to firebase
         HashMap<String, String> map = Cart.getPurchaseInfoMap();
         //sort the HashMap by turning it into a tree map
-        TreeMap<String, String> sortedMap = new TreeMap<>(map);
+        sortedMap = new TreeMap<>(map);
 
         //get ArrayList and display in ListView
         arrayList = Cart.getPurchaseInfo();
@@ -172,7 +144,13 @@ public class CheckoutActivityJava extends AppCompatActivity {
                         .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //remove from tree map for payment purposes
+                                removeFromTreeMap(item_selected);
+                                // remove from the array for display purposes
                                 Cart.removeItem(item_selected);
+                                //update display price
+                                price_TV.setText("€ " + Cart.getTotalPrice());
+                                view.invalidate();
                                 arrayAdapter.notifyDataSetChanged();
 
                             }
@@ -185,20 +163,19 @@ public class CheckoutActivityJava extends AppCompatActivity {
         });
 
         //Set price
-        TextView price_TV = findViewById(R.id.text_item_price);
-        price_TV.setText("€ " + Cart.getPrice());
+        price_TV = findViewById(R.id.text_item_price);
+        price_TV.setText("€ " + Cart.getTotalPrice());
 
         //Firebase set-up
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
-        paymentResultSuccess = false;
         mContext = this;
         currentUser = mAuth.getCurrentUser();
 
 
         userEmail = currentUser.getEmail();
-        getIntentInfo();
+        serverInfo();
         PaymentConfiguration.init(
                 getApplicationContext(),
                 "pk_test_ukVFEk9tOFrf0yHBMlxXTDhk00vWdBDKjT"
@@ -208,7 +185,76 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
     }
 
-    public void getIntentInfo() {
+    public void removeFromTreeMap(int identifier){
+        /****to remove from list, must first find unique value 'Tree Name'***/
+        //get string at the position it has been removed.
+        String currentItem = arrayList.get(identifier);
+        //split each item and add to list
+        String [] currentItemSplit = currentItem.split("\\n+");
+        String treeNameRemove = currentItemSplit[0];
+        String treeLocationRemove = currentItemSplit[1];
+        String treeTypeRemove = currentItemSplit[2];
+
+        //Loop through and find Tree name
+        /*
+        for (int i =0; i < currentItemSplit.length;i++){
+            if (currentItemSplit[i].contains("Tree Name :")) {
+
+                treeNameRemove = currentItemSplit[i];
+            }
+        }
+        */
+
+        // remove the key from the string to show value only
+        treeNameRemove = treeNameRemove.replace("Tree Name:", "").trim();
+        treeTypeRemove = treeTypeRemove.replace("Tree Type:", "").trim();
+        treeLocationRemove = treeLocationRemove.replace("Tree Location:", "").trim();
+        // update display price & tree counter for server price calculation
+
+        if (treeTypeRemove.equals("Oak")){
+            //remove the cost of tree
+            Cart.setTotalPrice(Cart.getTotalPrice()-3);
+            //remove 1 tree from counter
+            Cart.setCountO(Cart.getCountO()-1);
+
+        }else if (treeTypeRemove.equals("Willow")){
+            //remove the cost of tree
+            Cart.setTotalPrice(Cart.getTotalPrice()-2);
+            //remove 1 tree from counter
+            Cart.setCountW(Cart.getCountW()-1);
+
+        }else if (treeTypeRemove.equals("Birch")){
+            //remove the cost of tree
+            Cart.setTotalPrice(Cart.getTotalPrice()-1);
+            //remove 1 tree from counter
+            Cart.setCountB(Cart.getCountB()-1);
+        }
+        // remove key and value based on value
+        String keyName = "";
+        String keyLocation = "";
+        String keyType = "";
+        Set<String> keys = sortedMap.keySet();
+        for (String key: keys){
+            if (sortedMap.get(key).equals(treeNameRemove)) {
+                keyName = key;
+            } else if(sortedMap.get(key).equals(treeTypeRemove)){
+                keyType = key;
+            }else if(sortedMap.get(key).equals(treeLocationRemove)){
+                keyLocation = key;
+            }
+        }
+        sortedMap.remove(keyName);
+        sortedMap.remove(keyType);
+        sortedMap.remove(keyLocation);
+        Toast.makeText(mContext, "updated map: " + sortedMap, Toast.LENGTH_SHORT).show();
+
+
+    }
+
+
+    public void serverInfo() {
+        //edit string to suit the tree types selected
+        //this string will be sent to server to calculate final price.
         json = "{"
                 + "\"currency\":\"eur\","
                 + "\"email\":\"" + userEmail + "\"}";
@@ -241,6 +287,10 @@ public class CheckoutActivityJava extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logout) {
             mAuth.signOut();
+            //clear cart info
+            Cart.clearHashMap();
+            Cart.clearArrayList();
+            sortedMap.clear();
             finish();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -253,7 +303,9 @@ public class CheckoutActivityJava extends AppCompatActivity {
         super.onBackPressed();
     }
 
+
     private void startCheckout() {
+
         // Create a PaymentIntent by calling the server's /create-payment-intent endpoint.
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
@@ -265,8 +317,9 @@ public class CheckoutActivityJava extends AppCompatActivity {
         httpClient.newCall(request)
                 .enqueue(new PayCallback(this));
 
-        Button pay = findViewById(R.id.popup_btn);
-        pay.bringToFront();;
+
+        Button pay = findViewById(R.id.pay_btn);
+        pay.bringToFront();
         pay.setOnClickListener((View view) -> {
             CardInputWidget cardInputWidget = findViewById(R.id.cardInputWidget);
             PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
@@ -284,11 +337,11 @@ public class CheckoutActivityJava extends AppCompatActivity {
         });
 
 
+
     }
 
     private void displayAlert(@NonNull String title,
-                              @Nullable String message,
-                              boolean restartDemo) {
+                              @Nullable String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message);
@@ -306,7 +359,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         );
         // The response from the server includes the Stripe publishable key and
         // PaymentIntent details.
-        // For added security, our sample app gets the publishable key from the server
         String stripePublishableKey = responseMap.get("publishableKey");
         paymentIntentClientSecret = responseMap.get("clientSecret");
     }
@@ -376,21 +428,20 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
             if (status == PaymentIntent.Status.Succeeded) {
                 // Payment completed successfully
-                //log info
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                Log.w("onSuccess: ", gson.toJson(paymentIntent));
-
                 //add purchase details to user's database as a HashMap
                 myRef.child("users").child(currentUser.getUid()).child("Purchases").push().setValue(Cart.getPurchaseInfoMap());
                 //to payment confirmation page
+                //clear cart info
+                Cart.clearHashMap();
+                Cart.clearArrayList();
+
                 toPayConfirmation();
 
             } else if (status == PaymentIntent.Status.RequiresPaymentMethod) {
                 // Payment failed – allow retrying using a different payment method
                 activity.displayAlert(
                         "Payment failed",
-                        Objects.requireNonNull(paymentIntent.getLastPaymentError()).getMessage(),
-                        false
+                        Objects.requireNonNull(paymentIntent.getLastPaymentError()).getMessage()
                 );
             }
 
@@ -404,7 +455,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
             }
 
             // Payment request failed – allow retrying using the same payment method
-            activity.displayAlert("Error", e.toString(), false);
+            activity.displayAlert("Error", e.toString());
         }
 
     }
@@ -421,40 +472,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         Intent changeActivity = new Intent(mContext, activity_payment_confirmation.class);
         mContext.startActivity(changeActivity);
     }
-    /*
-    public void popup(android.view.View view) {
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window, null);
-
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = 400;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        Button popup_btn = findViewById(R.id.popup_btn);
-        //make button invisible
-        //popup_btn.setVisibility(View.INVISIBLE);
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                //make button visible again
-                //popup_btn.setVisibility(View.VISIBLE);
-                return true;
-
-            }
-        });
-    }
-    */
-
 
 
 }

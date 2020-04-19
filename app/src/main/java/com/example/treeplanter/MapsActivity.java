@@ -30,6 +30,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    /*
+    Reference: Book: 'Android Studio 3.0 Development Essentials' by Neil Smyth
+    this book was used as a guide for implementing the Google Maps into this application
+     */
+
     private static final int LOCATION_REQUEST_CODE = 101;
     private GoogleMap mMap;
     private FirebaseAuth mAuth;
@@ -58,7 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mAuth = FirebaseAuth.getInstance();
 
     }
-
+    //add menu to toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.treemenu, menu);
@@ -80,6 +85,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+    //set markers on map
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -111,8 +118,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Set a listener for marker click.
             mMap.setOnMarkerClickListener(this);
 
-            // Center Map on Dublin
+            // set Dublin lat lng
             LatLng dublin = new LatLng(53.3498, -6.2603);
+            //move camera to dublin and zoom 10f
             CameraUpdate point = CameraUpdateFactory.newLatLngZoom(dublin, 10f);
             mMap.moveCamera(point);
             mMap.animateCamera(point);
@@ -141,7 +149,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //If permisison accepted map is refreshed. If not a pop up message is displayed
     // Reference from book.
-    public void requestPermissionsResult(int requestCode,
+    public void onRequestPermissionsResult(int requestCode,
                                             String permissions[], int[] grantResults){
         switch (requestCode){
             case LOCATION_REQUEST_CODE: {
@@ -159,7 +167,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-    /** Called when the user clicks a marker. */
+    /* Called when the user clicks a marker. */
     @Override
     public boolean onMarkerClick(final Marker marker) {
         //When marker is clicked set button to be visible

@@ -1,32 +1,54 @@
 package com.example.treeplanter;
 
-import android.content.Intent;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Cart implements Serializable {
-
-    private static int countB = 1;
-    private static int countO = 1;
-    private static int countW = 1;
+    //count type of trees purchased
+    private static int countB = 0;
+    private static int countO = 0;
+    private static int countW = 0;
+    //for hasmap keys
     private static int count = 0;
     private static String name;
     private static String location;
     private static String type;
     private static int price = 0;
+    private static int totalPrice = 0;
     //Map is used for adding to Firebase
     private static HashMap<String, String> purchaseInfoMap = new HashMap<>();
     //ArrayList is used for diplay purposes on the payment page
     private static ArrayList<String> purchaseInfo = new ArrayList<>();
 
+    public static void clearHashMap(){
+        purchaseInfoMap.clear();
+    }
+
+    public static void clearArrayList(){
+        purchaseInfo.clear();
+    }
 
     public static void removeItem(int pos){
         purchaseInfo.remove(pos);
     }
     public static void setLocation(String location) {
         Cart.location = location;
+    }
+
+
+
+    public static void setPrice(int price) {
+        Cart.price = price;
+    }
+
+    public static void setTotalPrice(int totalPrice) {
+        Cart.totalPrice = totalPrice;
+    }
+
+    public static int getTotalPrice() {
+        return totalPrice;
     }
 
     public static void setType(String type) {
@@ -47,18 +69,6 @@ public class Cart implements Serializable {
         purchaseInfoMap.put("Tree Name " + count, name);
         purchaseInfoMap.put("Tree Location " + count, location);
         purchaseInfoMap.put("Tree type " + count, type);
-
-        if (treeType.equals("Birch")) {
-            price += 1;
-            countB ++;
-        }
-        else if (treeType.equals("Oak")){
-            price += 3;
-            countO ++;
-        }else{
-            price += 2;
-            countW ++;
-        }
 
         count ++;
     }
@@ -99,6 +109,17 @@ public class Cart implements Serializable {
     }
 
 
+    public static boolean containsStr(String str){
+        Set<String> keys = purchaseInfoMap.keySet();
+        for (String key: keys){
+            if (purchaseInfoMap.get(key).equals(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public static void setPurchaseInfo(String s) {
         purchaseInfo.add(s);
     }
@@ -107,3 +128,4 @@ public class Cart implements Serializable {
         return purchaseInfo;
     }
 }
+

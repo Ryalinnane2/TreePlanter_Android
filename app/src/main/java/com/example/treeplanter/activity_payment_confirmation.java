@@ -12,11 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Button;
 
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -47,23 +44,22 @@ public class activity_payment_confirmation extends AppCompatActivity {
         // change the color
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.stautsBar));
 
-
+        //set up Firebase
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
         currentUser = mAuth.getCurrentUser();
 
+        //set text view
         displayEmail = findViewById(R.id.payConfirmationEmail_TV);
-
         displayEmail.setText("Details of this payment has been sent to " + currentUser.getEmail());
-
     }
 
     public void Home_btn(View view){
         Intent intent = new Intent(this, LandingActivity.class);
-       // int numTree = +1;
         startActivity(intent);
     }
+    //add menu to toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.treemenu, menu);

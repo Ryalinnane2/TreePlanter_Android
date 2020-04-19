@@ -11,7 +11,7 @@
         layout="@layout/toolbar" />
     <Button
         android:id="@+id/addToCart"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:backgroundTint="@color/stautsBar"
@@ -28,8 +28,8 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/purchase_btn"
-        android:layout_width="wrap_content"
+        android:id="@+id/buy_another"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:backgroundTint="@color/stautsBar"
@@ -45,8 +45,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
     <Button
-        android:id="@+id/addMore"
-        android:layout_width="wrap_content"
+        android:id="@+id/purchase_btn"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:backgroundTint="@color/stautsBar"
@@ -76,7 +76,7 @@
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/purchase_btn"
+        app:layout_constraintBottom_toTopOf="@+id/buy_another"
         tools:layout_editor_absoluteY="427dp" />
 
     <TextView

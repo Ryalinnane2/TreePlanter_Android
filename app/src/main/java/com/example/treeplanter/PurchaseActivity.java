@@ -2,10 +2,12 @@ package com.example.treeplanter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -47,21 +49,23 @@ public class PurchaseActivity extends AppCompatActivity {
     private String treeType;
     private String treeLocation;
     private String name;
-    private Cart cart;
     private static int countB = 0;
     private int countO = 0;
     private int countW = 0;
-    private static HashMap<String, String> purchaseInfo;
     private ArrayList<String> arrayList = new ArrayList<>();
     private int price = 0;
+    private int totalPrice = 0;
+    private String purchaseInfo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
+        // set Toolbar instead of ActionBar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         //change colour of status bar
         Window window = this.getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -76,6 +80,7 @@ public class PurchaseActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
+        //set views to variables
         treeType_TV = findViewById(R.id.treeType_TV);
         treeName_TV = findViewById(R.id.treeName_TV);
         treeLocation_TV = findViewById(R.id.treeLocation_TV);
@@ -85,97 +90,124 @@ public class PurchaseActivity extends AppCompatActivity {
         // Get the location of tree selected from MapsActivity
         Intent i = getIntent();
         treeLocation = i.getStringExtra("treeLocation");
-        //treeType = i.getStringExtra("treeType");
         treeLocation_TV.setText("Tree location: " + treeLocation);
         treeType_TV.setText("Tree Type: " + treeType);
-        //cart = new Cart(treeLocation, treeType);
     }
+    //add menu to toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.treemenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+    //when items selected in the menu do the following
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId()== R.id.logout){
             mAuth.signOut();
+            //clear cart
+            Cart.clearHashMap();
+            Cart.clearArrayList();
             finish();
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
-    // sign out if back button pressed
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
 
+    //when purchase button is pressed do the following
     public void purchaseButton(View view) {
         if (!Cart.getPurchaseInfo().isEmpty()) {
-            countB = cart.getCountB();
-            countO = cart.getCountO();
-            countW = cart.getCountW();
-          //  purchaseInfo = new HashMap<>(cart.getPurchaseInfo());
-            //Send info to checkout activity, where it will be added to firebase
+            //Send info to checkout activity, where it will be displayed in the listview
             Intent intent = new Intent(PurchaseActivity.this, CheckoutActivityJava.class);
-            //send cart object
-            //intent.putExtra("countB",String.valueOf(countB));
-            //intent.putExtra("countB",String.valueOf(countO));
-            //intent.putExtra("countB",String.valueOf(countW));
-            //intent.putExtra("map",purchaseInfo);
             intent.putExtra("arrayList",arrayList);
-        /*
-        intent.putExtra("treeLocation", treeLocation);
-        intent.putExtra("treeName", name);
-        intent.putExtra("treeType", treeType);
-        */
             this.startActivity(intent);
 
-            Cart.setCountB(countB);
-            Cart.setCountO(countO);
-            Cart.setCountW(countW);
         }else{
             Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show();
         }
     }
 
+    //allow users to add more trees to their cart
     public void addMore_btn(View view){
-
+        // if is not empty send user back to selec type of next tree
         if (Cart.getPurchaseInfo() != null) {
             Intent intent = new Intent(PurchaseActivity.this, LandingActivity.class);
             this.startActivity(intent);
         }else{
+            //else let user know cart is empty
             Toast.makeText(this, "Cart is empty, please add to Cart before continuing", Toast.LENGTH_SHORT).show();
         }
 
     }
 
+    public void setPurchaseInfo(){
+        Cart.setType(treeType);
+        Cart.setName(name);
+        Cart.setLocation(treeLocation);
+        //add info to hashmap for adding to firebase
+        Cart.addToMap(treeType);
+        //update the price based on the the tree type added to cart
+        setPriceAndCount(treeType);
+        //update Cart with prices
+        Cart.setPrice(price);
+        // add purchase info to arraylist for displaying in listview
+        purchaseInfo = ("Tree Name: " + name + '\n' + "Tree Location: " + treeLocation + '\n' + "Tree Type: " + treeType + '\n' + "Price: " + price);
+        // if (purchaseInfo.contains(name)){
+        Cart.setPurchaseInfo(purchaseInfo);
+        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+    }
+
     public void addToCart(View view){
+        // get the name entered on this activity
         name = treeName_TV.getText().toString();
         if (name != null) {
-            Cart.setType(treeType);
-            Cart.setName(name);
-            Cart.setLocation(treeLocation);
-            Cart.addToMap(treeType);
-            setPrice(treeType);
-            String purchaseInfo = ("Tree Name: "+ name +'\n' + "Tree Location: "+ treeLocation + '\n' + "Tree Type: " + treeType + '\n' + "Price: " + price);
-            Cart.setPurchaseInfo(purchaseInfo);
+            if (Cart.containsStr(name)) {
+                new AlertDialog.Builder(PurchaseActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Duplicate Name")
+                        .setMessage("You have already added a tree with the same name, would you like to add another tree with this name?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //remove from tree map for payment purposes
+                                setPurchaseInfo();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            }else {
+                setPurchaseInfo();
+                Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
 
-            //Toast.makeText(this, Integer.toString(cart.getCountB()), Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
-            //Toast.makeText(this, Cart.getPurchaseInfo().toString(), Toast.LENGTH_LONG).show();
+
+            }
+
         }else{
+            //user must enter name before adding to cart
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
         }
     }
-    public void setPrice(String s){
+    public void setPriceAndCount(String s){
+        //update price depending on tree type selected
+        //this price is for display purposes only
+        //prices for billing is calculated on stripe server using same prices
         if (s.equals("Birch")){
+            Cart.setTotalPrice(Cart.getTotalPrice() + 1);
             this.price = 1;
+            Cart.setCountB(Cart.getCountB()+1);
         }else if(s.equals("Willow")){
+            Cart.setTotalPrice(Cart.getTotalPrice() + 2);
             this.price = 2;
+            Cart.setCountW(Cart.getCountW()+1);
         }else if (s.equals("Oak")){
+            Cart.setTotalPrice(Cart.getTotalPrice() + 3);
             this.price = 3;
+            Cart.setCountO(Cart.getCountO()+1);
         }else{
             this.price = 0;
         }
