@@ -116,7 +116,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
         // change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.stautsBar));
 
-        //get Hashmap to add to firebase
+         //get Hashmap to add to firebase
         HashMap<String, String> map = Cart.getPurchaseInfoMap();
         //sort the HashMap by turning it into a tree map
         sortedMap = new TreeMap<>(map);
@@ -161,6 +161,11 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
             }
         });
+        //set counters
+        countB = Cart.getCountB();
+        countW = Cart.getCountW();
+        countO = Cart.getCountO();
+        Toast.makeText(this, countB + " " + countO + " " + countW, Toast.LENGTH_LONG).show();
 
         //Set price
         price_TV = findViewById(R.id.text_item_price);
@@ -175,14 +180,16 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
 
         userEmail = currentUser.getEmail();
-        serverInfo();
+
         PaymentConfiguration.init(
                 getApplicationContext(),
                 "pk_test_ukVFEk9tOFrf0yHBMlxXTDhk00vWdBDKjT"
         );
+        serverInfo();
+
+
 
         startCheckout();
-
     }
 
     public void removeFromTreeMap(int identifier){
@@ -194,16 +201,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         String treeNameRemove = currentItemSplit[0];
         String treeLocationRemove = currentItemSplit[1];
         String treeTypeRemove = currentItemSplit[2];
-
-        //Loop through and find Tree name
-        /*
-        for (int i =0; i < currentItemSplit.length;i++){
-            if (currentItemSplit[i].contains("Tree Name :")) {
-
-                treeNameRemove = currentItemSplit[i];
-            }
-        }
-        */
 
         // remove the key from the string to show value only
         treeNameRemove = treeNameRemove.replace("Tree Name:", "").trim();
@@ -248,7 +245,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         sortedMap.remove(keyLocation);
         Toast.makeText(mContext, "updated map: " + sortedMap, Toast.LENGTH_SHORT).show();
 
-
     }
 
 
@@ -257,23 +253,28 @@ public class CheckoutActivityJava extends AppCompatActivity {
         //this string will be sent to server to calculate final price.
         json = "{"
                 + "\"currency\":\"eur\","
+                + "\"numBirch\":\"" + countB + "\","
+                + "\"numOak\":\"" + countO + "\","
+                + "\"numWillow\":\"" + countW + "\","
                 + "\"email\":\"" + userEmail + "\"}";
-
+        /*
         StringBuilder b = new StringBuilder(json);
-
-        if (Cart.getCountB() != 0) {
-            countB = Cart.getCountB();
+        b.insert(b.indexOf("eur") + 5, "\"numBirch\":\"" + countB + "\",");
+        b.insert(b.indexOf("eur") + 5, "\"numOak\":\"" + countO + "\",");
+        b.insert(b.indexOf("eur") + 5, "\"numWillow\":\"" + countW + "\",");
+/*
+        if (countB != 0) {
             b.insert(b.indexOf("eur") + 5, "\"numBirch\":\"" + countB + "\",");
         }
-        if (Cart.getCountO() != 0) {
-            countO = Cart.getCountO();
+        if (countO != 0) {
             b.insert(b.indexOf("eur") + 5, "\"numOak\":\"" + countO + "\",");
         }
-        if (Cart.getCountW() != 0) {
-            countW = Cart.getCountW();
+        if (countW != 0) {
             b.insert(b.indexOf("eur") + 5, "\"numWillow\":\"" + countW + "\",");
         }
-        json = b.toString();
+
+ */
+        //json = b.toString();
 
     }
 
@@ -291,6 +292,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
             Cart.clearHashMap();
             Cart.clearArrayList();
             sortedMap.clear();
+            Cart.clearCountersAndPrice();
             finish();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -305,7 +307,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
 
     private void startCheckout() {
-
+        Log.d("message", json);
         // Create a PaymentIntent by calling the server's /create-payment-intent endpoint.
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
@@ -319,9 +321,9 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
 
         Button pay = findViewById(R.id.pay_btn);
-        pay.bringToFront();
         pay.setOnClickListener((View view) -> {
             CardInputWidget cardInputWidget = findViewById(R.id.cardInputWidget);
+            cardInputWidget.bringToFront();
             PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
             if (params != null) {
                 ConfirmPaymentIntentParams confirmParams = ConfirmPaymentIntentParams
@@ -434,6 +436,7 @@ public class CheckoutActivityJava extends AppCompatActivity {
                 //clear cart info
                 Cart.clearHashMap();
                 Cart.clearArrayList();
+                Cart.clearCountersAndPrice();
 
                 toPayConfirmation();
 

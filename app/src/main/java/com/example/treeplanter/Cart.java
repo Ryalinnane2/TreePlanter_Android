@@ -22,6 +22,14 @@ public class Cart implements Serializable {
     //ArrayList is used for diplay purposes on the payment page
     private static ArrayList<String> purchaseInfo = new ArrayList<>();
 
+    public static void clearCountersAndPrice(){
+        countB = 0;
+        countO = 0;
+        countW = 0;
+        totalPrice = 0;
+        count = 0;
+    }
+
     public static void clearHashMap(){
         purchaseInfoMap.clear();
     }
@@ -64,13 +72,28 @@ public class Cart implements Serializable {
         name = n;
     }
 
-    public static void addToMap(String treeType){
+    public static void addToMap(){
 
         purchaseInfoMap.put("Tree Name " + count, name);
         purchaseInfoMap.put("Tree Location " + count, location);
         purchaseInfoMap.put("Tree type " + count, type);
 
         count ++;
+    }
+    public static void setPriceAndCount(String s){
+        //update price depending on tree type selected
+        //this price is for display purposes only
+        //prices for billing is calculated on stripe server using same prices
+        if (s.equals("Birch")){
+            totalPrice +=1;
+            countB +=1;
+        }else if(s.equals("Willow")){
+            totalPrice +=2;
+            countW +=1;
+        }else if (s.equals("Oak")){
+            totalPrice +=3;
+            countO +=1;
+        }
     }
     public static void setCount(int c) {
         count = c;

@@ -49,12 +49,8 @@ public class PurchaseActivity extends AppCompatActivity {
     private String treeType;
     private String treeLocation;
     private String name;
-    private static int countB = 0;
-    private int countO = 0;
-    private int countW = 0;
     private ArrayList<String> arrayList = new ArrayList<>();
     private int price = 0;
-    private int totalPrice = 0;
     private String purchaseInfo = "";
 
     @Override
@@ -107,6 +103,7 @@ public class PurchaseActivity extends AppCompatActivity {
             //clear cart
             Cart.clearHashMap();
             Cart.clearArrayList();
+            Cart.clearCountersAndPrice();
             finish();
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
@@ -124,7 +121,6 @@ public class PurchaseActivity extends AppCompatActivity {
         if (!Cart.getPurchaseInfo().isEmpty()) {
             //Send info to checkout activity, where it will be displayed in the listview
             Intent intent = new Intent(PurchaseActivity.this, CheckoutActivityJava.class);
-            intent.putExtra("arrayList",arrayList);
             this.startActivity(intent);
 
         }else{
@@ -150,14 +146,16 @@ public class PurchaseActivity extends AppCompatActivity {
         Cart.setName(name);
         Cart.setLocation(treeLocation);
         //add info to hashmap for adding to firebase
-        Cart.addToMap(treeType);
+        Cart.addToMap();
         //update the price based on the the tree type added to cart
-        setPriceAndCount(treeType);
+        Cart.setPriceAndCount(treeType);
+        //price changes depeding on tree type selected.
+        setPrice(treeType);
         //update Cart with prices
-        Cart.setPrice(price);
+        //Cart.setPrice(price);
         // add purchase info to arraylist for displaying in listview
         purchaseInfo = ("Tree Name: " + name + '\n' + "Tree Location: " + treeLocation + '\n' + "Tree Type: " + treeType + '\n' + "Price: " + price);
-        // if (purchaseInfo.contains(name)){
+        // add info to arraylist in cart
         Cart.setPurchaseInfo(purchaseInfo);
         Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
     }
@@ -182,9 +180,7 @@ public class PurchaseActivity extends AppCompatActivity {
                         .show();
             }else {
                 setPurchaseInfo();
-                Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
-
-
+                Toast.makeText(this, Cart.getCountB() + " " + Cart.getCountO() + " " + Cart.getCountW(), Toast.LENGTH_LONG).show();
             }
 
         }else{
@@ -192,22 +188,16 @@ public class PurchaseActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
         }
     }
-    public void setPriceAndCount(String s){
+    public void setPrice(String s){
         //update price depending on tree type selected
         //this price is for display purposes only
         //prices for billing is calculated on stripe server using same prices
         if (s.equals("Birch")){
-            Cart.setTotalPrice(Cart.getTotalPrice() + 1);
             this.price = 1;
-            Cart.setCountB(Cart.getCountB()+1);
         }else if(s.equals("Willow")){
-            Cart.setTotalPrice(Cart.getTotalPrice() + 2);
             this.price = 2;
-            Cart.setCountW(Cart.getCountW()+1);
         }else if (s.equals("Oak")){
-            Cart.setTotalPrice(Cart.getTotalPrice() + 3);
             this.price = 3;
-            Cart.setCountO(Cart.getCountO()+1);
         }else{
             this.price = 0;
         }
