@@ -70,14 +70,11 @@ import java.util.TreeMap;
 public class CheckoutActivityJava extends AppCompatActivity {
     /**
      * Reference to Stripe guide followed:  https://stripe.com/docs/payments/accept-a-payment#android
-     * Note: Stripe server.js must be run locally on the desktop.
-     *  - open command terminal, change directory to where the stripe.js is stored.
-     *  - enter the command: 'npm start' to run the server.
-     *
-     * Else the following step can be followed here: https://github.com/stripe-samples/accept-a-card-payment#how-to-run-locally.
+     * The Node.js server is hosted on Heroku. It can be changed to run on the desktop if required by changing the BACKEND_URL
      */
+    // To run on desktop change this URL to http://10.0.2.2:4242/"
     // 10.0.2.2 is the Android emulator's alias to localhost
-    private static final String BACKEND_URL = "http://10.0.2.2:4242/";
+    private static final String BACKEND_URL = "https://pacific-forest-11057.herokuapp.com/";
 
     private OkHttpClient httpClient = new OkHttpClient();
     private String paymentIntentClientSecret;
@@ -165,7 +162,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         countB = Cart.getCountB();
         countW = Cart.getCountW();
         countO = Cart.getCountO();
-        Toast.makeText(this, countB + " " + countO + " " + countW, Toast.LENGTH_LONG).show();
 
         //Set price
         price_TV = findViewById(R.id.text_item_price);
@@ -185,9 +181,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
                 getApplicationContext(),
                 "pk_test_ukVFEk9tOFrf0yHBMlxXTDhk00vWdBDKjT"
         );
-        serverInfo();
-
-
 
         startCheckout();
     }
@@ -247,37 +240,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
     }
 
-
-    public void serverInfo() {
-        //edit string to suit the tree types selected
-        //this string will be sent to server to calculate final price.
-        json = "{"
-                + "\"currency\":\"eur\","
-                + "\"numBirch\":\"" + countB + "\","
-                + "\"numOak\":\"" + countO + "\","
-                + "\"numWillow\":\"" + countW + "\","
-                + "\"email\":\"" + userEmail + "\"}";
-        /*
-        StringBuilder b = new StringBuilder(json);
-        b.insert(b.indexOf("eur") + 5, "\"numBirch\":\"" + countB + "\",");
-        b.insert(b.indexOf("eur") + 5, "\"numOak\":\"" + countO + "\",");
-        b.insert(b.indexOf("eur") + 5, "\"numWillow\":\"" + countW + "\",");
-/*
-        if (countB != 0) {
-            b.insert(b.indexOf("eur") + 5, "\"numBirch\":\"" + countB + "\",");
-        }
-        if (countO != 0) {
-            b.insert(b.indexOf("eur") + 5, "\"numOak\":\"" + countO + "\",");
-        }
-        if (countW != 0) {
-            b.insert(b.indexOf("eur") + 5, "\"numWillow\":\"" + countW + "\",");
-        }
-
- */
-        //json = b.toString();
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.treemenu, menu);
@@ -307,9 +269,17 @@ public class CheckoutActivityJava extends AppCompatActivity {
 
 
     private void startCheckout() {
-        Log.d("message", json);
-        // Create a PaymentIntent by calling the server's /create-payment-intent endpoint.
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        //this string will be sent to server to calculate final price.
+        json = "{"
+                + "\"currency\":\"eur\","
+                + "\"numBirch\":\"" + countB + "\","
+                + "\"numOak\":\"" + countO + "\","
+                + "\"numWillow\":\"" + countW + "\","
+                + "\"email\":\"" + userEmail + "\"}";
+
+        // Create a PaymentIntent by calling the server's /create-payment-intent endpoint.
+
 
         RequestBody body = RequestBody.create(json, mediaType);
         Request request = new Request.Builder()

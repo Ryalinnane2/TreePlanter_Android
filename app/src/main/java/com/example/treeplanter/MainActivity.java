@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // User has successfully signed in
                                 Log.d(TAG, "signInWithEmail:success");
-                                // procceed to the next page
-                                //logIn();
+                                //ensure user has been verified before sending to next page
                                 currentUser = mAuth.getCurrentUser();
                                 checkIfEmailVerified();
                             } else {

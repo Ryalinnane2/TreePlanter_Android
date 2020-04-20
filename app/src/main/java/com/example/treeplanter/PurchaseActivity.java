@@ -180,7 +180,6 @@ public class PurchaseActivity extends AppCompatActivity {
                         .show();
             }else {
                 setPurchaseInfo();
-                Toast.makeText(this, Cart.getCountB() + " " + Cart.getCountO() + " " + Cart.getCountW(), Toast.LENGTH_LONG).show();
             }
 
         }else{
