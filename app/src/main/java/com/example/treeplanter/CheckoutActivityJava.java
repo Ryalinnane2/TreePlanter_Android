@@ -236,7 +236,6 @@ public class CheckoutActivityJava extends AppCompatActivity {
         sortedMap.remove(keyName);
         sortedMap.remove(keyType);
         sortedMap.remove(keyLocation);
-        Toast.makeText(mContext, "updated map: " + sortedMap, Toast.LENGTH_SHORT).show();
 
     }
 
